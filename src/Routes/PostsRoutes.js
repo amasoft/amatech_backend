@@ -1,0 +1,11 @@
+import Router from "express";
+import postcontroller from "../Controllers/PostsController.js";
+import { PostExist } from "../middlewares/postmiddleware.js";
+import { fileUplaod } from "../util/fileupload.js";
+const postRouter = Router();
+postRouter.post("/", fileUplaod, postcontroller.createPost);
+postRouter.get("/:id", postcontroller.fetchSinglePostByid);
+postRouter.delete("/:id", PostExist, postcontroller.deletePost);
+postRouter.put("/:id", PostExist, postcontroller.UpdatePost);
+postRouter.get("/", postcontroller.fetchAllPost);
+export default postRouter;
