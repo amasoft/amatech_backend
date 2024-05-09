@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { type } from "os";
 const postSchema = mongoose.Schema(
   {
     title: {
@@ -15,11 +16,19 @@ const postSchema = mongoose.Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Authors",
+      ref: "authors",
       required: true,
     },
     category: {
       type: String,
+    },
+    published_date: {
+      type: String,
+      default: Date.now(),
+    },
+    reading_time: {
+      type: String,
+      default: "5 minutes",
     },
   },
   {

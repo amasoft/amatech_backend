@@ -35,11 +35,29 @@ export default class postcontroller {
     }
   }
   static async fetchSinglePostByid(req, res) {
-    display("post", "data");
     const id = req.params.id;
     try {
-      const post = await Posts.findOne({ _id: id }, { post_picture: 0 });
+      const post = await Posts.findOne(
+        { _id: id },
+        { post_picture: 0 }
+      ).populate({
+        path: "author",
+        options: { strictPopulate: false },
+      });
 
+      const { lastName, username } = post.author;
+      const { _id, content, title, published_date, reading_time } = post;
+      console.log(9, post);
+      const filteredData = {
+        lastName: lastName,
+        _id: _id,
+        userName: username,
+        content: content,
+        title: title.toUpperCase(),
+        reading_time,
+        published_date,
+      };
+      // console.log(JSON.stringify(post.author));
       if (!post)
         return res.status(409).json({
           message: "there is no post",
@@ -47,7 +65,7 @@ export default class postcontroller {
 
       res.status(201).json({
         message: "Post retrieved  Succesfull!",
-        data: post,
+        data: filteredData,
       });
     } catch (err) {
       // const errors = handleErrors(err);
@@ -59,16 +77,59 @@ export default class postcontroller {
   static async fetchAllPost(req, res) {
     display("post", "data");
     try {
-      const post = await Posts.find({}, { post_picture: 0 });
+      const posts = await Posts.find({}, { post_picture: 0 });
+      // const posts = await Posts.find({}, { post_picture: 0 }).populate({
+      //   path: "author",
+      //   options: { strictPopulate: false },
+      // });
 
-      if (!post)
+      if (!posts || posts.length === 0) {
         return res.status(409).json({
-          message: "there is no post",
+          message: "There are no posts",
         });
+      }
+      // const usernme = posts.author ? posts.author.username : "Unknown";
+      // const { _id, content, title, published_date, reading_time } = posts;
+
+      // console.log(7, posts);
+      // console.log(1, title);
+      // console.log(7, published_date);
+      // console.log(7, reading_time);
+      // const postData = posts.map((post) => {
+      //   const usernme = post.author ? post.author.username : "Unknown";
+      //   const { _id, content, title, published_date, reading_time } = post;
+
+      //   // return {
+      //   //   _id: post._id,
+      //   //   username: username,
+
+      //   // };
+      //   return {
+      //     _id,
+      //     content,
+      //     title,
+      //     published_date,
+      //     reading_time,
+      //   };
+      // });
+      // console.log(lastName, username);
+      // const filteredData = {
+      //   lastName: lastName,
+      //   _id: _id,
+      //   userName: username,
+      //   content: content,
+      //   title: title.toUpperCase(),
+      //   reading_time,
+      //   published_date,
+      // };
+      // if (!post)
+      //   return res.status(409).json({
+      //     message: "there is no post",
+      //   });
 
       res.status(201).json({
-        count: post.length,
-        data: post,
+        count: posts.length,
+        data: posts,
       });
     } catch (err) {
       // const errors = handleErrors(err);
