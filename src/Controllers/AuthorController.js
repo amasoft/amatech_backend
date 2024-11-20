@@ -49,7 +49,6 @@ import { display } from "../util/display.js";
 // const maxAge = 3 * 24 * 60 * 60;
 export default class authoController {
   static async signup(req, res) {
-    console.log("welcom sir");
     const verifycode = Math.floor(Math.random() * 90000) + 10000;
     const verifyLink = `localhost:3000/api/v1/verifyemail/${verifycode}`;
     req.value.code = verifycode;
@@ -59,9 +58,13 @@ export default class authoController {
         return res.status(409).json({
           message: "Registration not Succesfull!",
         });
-      // const sendCode = sendSMS(user.phoneNumber, verifycode);
       var message = `Dear ${author.firstName} ${author.lastName} welcome, klndly verify Your Account using this Passcode`;
-      const sendCode = sendMail(verifyLink, author.email, message);
+      const sendCode = sendMail(
+        verifyLink,
+        author.email,
+        author.firstName,
+        author.lastName
+      );
 
       console.log("sendCode");
       console.log(sendCode);
@@ -76,11 +79,8 @@ export default class authoController {
         // token,
         message: "Registration Succesfull Proceed to verify your Email",
       });
-    } catch (err) {
-      // const errors = handleErrors(err);
-      console.log("arinze", err);
-      console.log("faith", JSON.stringify(err));
-      return res.status(400).json({ errors: err.message });
+    } catch (error) {
+      return res.status(400).json({ success: false, error: error.message });
     }
   }
 

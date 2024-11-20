@@ -19,6 +19,8 @@ if (storage) {
 }
 const upload = multer({ storage });
 // postRouter.post("/", fileUplaod, postcontroller.createPost);
+//09034011070
+
 postRouter.post("/", upload.single("file"), postcontroller.createPost);
 postRouter.get("/:id", postcontroller.fetchSinglePostByid);
 postRouter.delete("/:id", PostExist, postcontroller.deletePost);

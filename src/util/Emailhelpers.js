@@ -33,7 +33,7 @@ export const sendSMS = (userMobileNo, code) => {
       return error;
     });
 };
-export const sendMail = async (verifycode, email, message) => {
+export const sendMail = async (verifycode, email, firstname, lastname) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -42,6 +42,8 @@ export const sendMail = async (verifycode, email, message) => {
     },
   });
 
+  var message = `Dear ${firstname} ${lastname} welcome, klndly verify Your Account using this Passcode`;
+  const sendCode = sendMail(verifyLink, author.email, message);
   var mailOptions = {
     from: "amadifaraday@gmail.com",
     to: `${email}`,

@@ -3,7 +3,7 @@ import { display } from "../util/display.js";
 import multer from "multer";
 import redis from "redis";
 import { v2 as cloudinary } from "cloudinary";
-
+import mongoose from "mongoose";
 export default class postcontroller {
   static async createPost(req, res) {
     // upload image first
@@ -38,15 +38,15 @@ export default class postcontroller {
         console.error("Error uploading image:", err);
       }
     }
-    const imageUrl = await uploadImage(req.file.path);
-    console.log("data>>>>" + imageUrl);
+    // const imageUrl = await uploadImage(req.file.path);
+    // console.log("data>>>>" + imageUrl);
     try {
       const data = {
         title: req.body.title,
         content: req.body.content,
-        author: req.body.author,
+        author: mongoose.Types.ObjectId(req.body.author),
         category: req.body.category,
-        post_picture: imageUrl,
+        // post_picture: imageUrl,
       };
       console.log(data);
       const post = await Posts.create(data);
@@ -74,6 +74,10 @@ export default class postcontroller {
         options: { strictPopulate: false },
       });
 
+      if (!post)
+        return res.status(409).json({
+          message: "there is no post",
+        });
       const { lastName, username } = post.author;
       const { _id, content, title, published_date, reading_time } = post;
       console.log(9, post);
@@ -87,10 +91,6 @@ export default class postcontroller {
         published_date,
       };
       // console.log(JSON.stringify(post.author));
-      if (!post)
-        return res.status(409).json({
-          message: "there is no post",
-        });
 
       res.status(201).json({
         message: "Post retrieved  Succesfull!",
@@ -116,7 +116,10 @@ export default class postcontroller {
     // client.setex(id, process.env.CACHE_DURATION, JSON.stringify(data));
 
     try {
-      const posts = await Posts.find({});
+      const posts = await Posts.find({}).populate({
+        path: "author",
+        options: { strictPopulate: false },
+      });
 
       if (!posts || posts.length === 0) {
         return res.status(409).json({
@@ -162,7 +165,6 @@ export default class postcontroller {
       if (updatePost.acknowledged) {
         return res.status(201).json({
           message: "Post updated successfully!!",
-          data: updatePost,
         });
       }
     } catch (error) {

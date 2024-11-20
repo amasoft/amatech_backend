@@ -15,13 +15,15 @@ import {
   validateLoginInput,
 } from "../middlewares/authmiddleware.js";
 const authorRouter = Router();
+
 authorRouter.post(
   "/signup",
   [validateInput],
   [AuthorExist],
-  [usernameExist],
+  // [usernameExist],
   authoController.signup
 );
+
 authorRouter.post("/login", [validateLoginInput], authoController.login);
 authorRouter.get("/verifyemail/:verifycode", authoController.verifyEmail);
 // router.post("/isemailverified", [isEmailverified], authentication.getProfiles);

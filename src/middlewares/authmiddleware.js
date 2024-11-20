@@ -6,16 +6,17 @@ export const EmailExist = async (req, res, next) => {
     next();
     return;
   }
-  return res.status(200).json({
+  return res.status(409).json({
     message: "No account with this email",
   });
 };
 export const AuthorExist = async (req, res, next) => {
   const authorExist = await Author.findOne({ email: req.body.email });
   if (authorExist) {
-    return res.json({
+    return res.status(409).json({
       status: 409,
-      message: "author Already exist",
+      success: false,
+      message: "Email already exist",
     });
   }
   next();
@@ -25,6 +26,7 @@ export const usernameExist = async (req, res, next) => {
   if (usernameExist) {
     return res.json({
       status: 409,
+      success: false,
       message: "username Already exist",
     });
   }
@@ -54,7 +56,7 @@ export const isresetCodevalid = async (req, res, next) => {
 
 export const validateInput = async (req, res, next) => {
   const schema = Joi.object({
-    lastName: Joi.string().alphanum().required().messages({
+    lastName: Joi.string().required().messages({
       "string.required": "lastname cannot be empty",
       "string.alphanum": "lastname  must only contain alphanumeric characters",
     }),
@@ -62,19 +64,32 @@ export const validateInput = async (req, res, next) => {
     email: Joi.string().email().required(),
     username: Joi.string().required(),
     password: Joi.string().min(8).max(12).required(),
+    // phoneNumber: Joi.string()
+    //   .pattern(/^\+[0-9]{13}$/)
+    //   .required()
+    //   .messages({
+    //     "string.pattern.base":
+    //       "mobile number must be alphanumeric with no special characters",
+    //     "any.required": "Password is required",
+    //   }),
     phoneNumber: Joi.string()
-      // .pattern(/^\+[0-9]{13}$/)
+      .pattern(/^\+[0-9]{13}$/)
       .required()
       .messages({
         "string.pattern.base":
-          "mobile number must be alphanumeric with no special characters",
-        "any.required": "Password is required",
+          "Phone number must start with '+' followed by exactly 13 digits.", // When format is incorrect
+        "any.required": "Phone number is required.", // When field is missing
       }),
   });
 
   const { error, value } = schema.validate(req.body);
+  console.log("Validation Error>>" + error);
+  console.log("Validation Value>>" + JSON.stringify(value));
   if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+    // return res.status(400).json({ error: error.details[0].message });
+    return res
+      .status(200)
+      .json({ success: false, error: error.details[0].message });
   }
   req.value = value;
   next();
