@@ -8,10 +8,13 @@ export const PostExist = async (req, res, next) => {
   const id = req.params.id;
   const post = await Post.findOne({ _id: id });
   if (post) {
+    console.log("POST is EXISTING");
+
     req.postID = id;
     next();
     return;
   }
+  console.log("POST  NO EXIST");
   return res.status(200).json({
     message: "there is no post",
   });

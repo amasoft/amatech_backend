@@ -35,6 +35,7 @@ import swaggerUiDist from "swagger-ui-dist";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import * as glob from "glob";
+import axios from "axios";
 // import path from "path";
 // import { fileURLToPath } from "url";
 
@@ -106,6 +107,24 @@ console.log("Patrick  " + swaggerSpec);
 console.log("Patrick " + JSON.stringify(swaggerSpecb));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecb));
 // Basic route for testing
+
+app.use(async (req, res, next) => {
+  const visitorDetails = {
+    ip: req.ip || req.connection.remoteAddress,
+    method: req.method,
+    url: req.originalUrl,
+    userAgent: req.headers["user-agent"],
+    time: new Date().toISOString(),
+  };
+  const ip = req.ip || req.connection.remoteAddress;
+  console.log("Visitor Details:", visitorDetails);
+  const geoData = await axios.get(
+    `https://ipinfo.io/${ip}?token=56485c1f3e5a86`
+  );
+  console.log("Geolocation Details:", geoData.data);
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send("Welcome test index ");
 });

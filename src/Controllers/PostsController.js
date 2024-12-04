@@ -38,7 +38,7 @@ export default class postcontroller {
         console.error("Error uploading image:", err);
       }
     }
-    // const imageUrl = await uploadImage(req.file.path);
+    const imageUrl = await uploadImage(req.file.path);
     // console.log("data>>>>" + imageUrl);
     try {
       const data = {
@@ -46,7 +46,7 @@ export default class postcontroller {
         content: req.body.content,
         author: mongoose.Types.ObjectId(req.body.author),
         category: req.body.category,
-        // post_picture: imageUrl,
+        post_picture: imageUrl,
       };
       console.log(data);
       const post = await Posts.create(data);
@@ -79,7 +79,14 @@ export default class postcontroller {
           message: "there is no post",
         });
       const { lastName, username } = post.author;
-      const { _id, content, title, published_date, reading_time } = post;
+      const {
+        _id,
+        content,
+        title,
+        published_date,
+        reading_time,
+        post_picture,
+      } = post;
       console.log(9, post);
       const filteredData = {
         lastName: lastName,
@@ -89,6 +96,7 @@ export default class postcontroller {
         title: title.toUpperCase(),
         reading_time,
         published_date,
+        post_picture,
       };
       // console.log(JSON.stringify(post.author));
 
@@ -153,18 +161,55 @@ export default class postcontroller {
     }
   }
 
+  //   const express = require('express');
+  // const router = express.Router();
+  // const Post = require('../models/Post'); // Assuming you have a Post model
+
+  // // Update a post by ID
+  // router.put('/posts/:id', async (req, res) => {
+  //     const postId = req.params.id;
+  //     const updateData = req.body;
+
+  //     try {
+  //         // Find and update the post
+  //         const updatedPost = await Post.findByIdAndUpdate(postId, updateData, { new: true });
+
+  //         if (!updatedPost) {
+  //             return res.status(404).json({ message: 'Post not found' });
+  //         }
+
+  //         res.status(200).json(updatedPost);
+  //     } catch (error) {
+  //         console.error(error);
+  //         res.status(500).json({ message: 'Failed to update the post' });
+  //     }
+  // });
+
+  // module.exports = router;
+
   static async UpdatePost(req, res) {
     try {
       const id = req.postID;
       const content = req.body.content;
       const title = req.body.title;
-      const updatePost = await Posts.updateOne(
-        { _id: id },
-        { $set: { content: content, title: title } }
-      );
-      if (updatePost.acknowledged) {
+      const data = {
+        content: content,
+        title: title,
+      };
+      console.log("UPDATE ID" + id);
+      console.log("UPDATE ID" + JSON.stringify(req.body));
+      console.log("UPDATE ID" + title);
+      // const updatePost = await Posts.updateOne(
+      //   { _id: id },
+      //   { $set: { content: content, title: title } }
+      // );
+      const updatedPost = await Posts.findByIdAndUpdate(id, data, {
+        new: true,
+      });
+      if (updatedPost) {
         return res.status(201).json({
           message: "Post updated successfully!!",
+          data: JSON.stringify(data),
         });
       }
     } catch (error) {
