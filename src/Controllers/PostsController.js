@@ -32,7 +32,7 @@ export default class postcontroller {
         const response = await cloudinary.uploader.upload(filePath, {
           resource_type: "auto", // Automatically detects image/video type
         });
-        console.log("Image uploaded successfully!", response);
+        // console.log("Image uploaded successfully!", response);
         return response.secure_url; // Get the uploaded image URL
       } catch (err) {
         console.error("Error uploading image:", err);
@@ -48,7 +48,7 @@ export default class postcontroller {
         category: req.body.category,
         post_picture: imageUrl,
       };
-      console.log(data);
+      // console.log(data);
       const post = await Posts.create(data);
       if (!post)
         return res.status(409).json({
@@ -56,11 +56,12 @@ export default class postcontroller {
         });
       res.status(201).json({
         message: "Post Created  Succesfull!",
+        data: post,
       });
     } catch (err) {
       // const errors = handleErrors(err);
-
-      return res.status(400).json({ errors: err.message });
+      throw err;
+      //  return res.status(400).json({ error: err.message });
     }
   }
   static async fetchSinglePostByid(req, res) {
@@ -75,7 +76,7 @@ export default class postcontroller {
       });
 
       if (!post)
-        return res.status(409).json({
+        return res.status(404).json({
           message: "there is no post",
         });
       const { lastName, username } = post.author;
@@ -87,27 +88,27 @@ export default class postcontroller {
         reading_time,
         post_picture,
       } = post;
-      console.log(9, post);
       const filteredData = {
         lastName: lastName,
         _id: _id,
         userName: username,
         content: content,
-        title: title.toUpperCase(),
+        // title: title.toUpperCase(),
+        title: title,
         reading_time,
         published_date,
         post_picture,
       };
       // console.log(JSON.stringify(post.author));
 
-      res.status(201).json({
+      res.status(200).json({
         message: "Post retrieved  Succesfull!",
         data: filteredData,
       });
     } catch (err) {
       // const errors = handleErrors(err);
 
-      return res.status(400).json({ errors: err.message });
+      return res.status(404).json({ error: err.message });
     }
   }
 
@@ -134,7 +135,7 @@ export default class postcontroller {
           message: "There are no posts",
         });
       }
-      res.status(201).json({
+      res.status(200).json({
         count: posts.length,
         data: posts,
       });
@@ -149,8 +150,8 @@ export default class postcontroller {
       const id = req.postID;
       const deletePost = await Posts.deleteOne({ _id: id });
       if (deletePost.acknowledged) {
-        return res.status(201).json({
-          message: "Post deleted successfully!!",
+        return res.status(200).json({
+          message: "Post deleted successfully!",
         });
       }
     } catch (error) {
@@ -207,8 +208,8 @@ export default class postcontroller {
         new: true,
       });
       if (updatedPost) {
-        return res.status(201).json({
-          message: "Post updated successfully!!",
+        return res.status(200).json({
+          message: "Post updated successfully!",
           data: JSON.stringify(data),
         });
       }

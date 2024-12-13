@@ -1,0 +1,18 @@
+{
+  "req": {
+    "method": "POST",
+    "url": "http://127.0.0.1:8784/api/v1/post",
+    "headers": {}
+  },
+  "header": {
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*",
+    "content-type": "application/json; charset=utf-8",
+    "content-length": "449",
+    "etag": "W/\"1c1-WG17+Dy+hHil2284kr37BWXsnE0\"",
+    "date": "Wed, 11 Dec 2024 19:46:10 GMT",
+    "connection": "close"
+  },
+  "status": 201,
+  "text": "{\"message\":\"Post Created  Succesfull!\",\"data\":{\"title\":\"Post to Delete\",\"content\":\"This post will be deleted.\",\"post_picture\":\"https://res.cloudinary.com/dysiejkoy/image/upload/v1733946369/kvgi7gcc3idvfzvpreox.jpg\",\"author\":\"66456bb2eb7abd5a9c94c9eb\",\"category\":\"Tech\",\"published_date\":\"1733946368801\",\"reading_time\":\"5 minutes\",\"_id\":\"6759ec026afe98338b4bc9cd\",\"createdAt\":\"2024-12-11T19:46:10.775Z\",\"updatedAt\":\"2024-12-11T19:46:10.775Z\",\"__v\":0}}"
+}

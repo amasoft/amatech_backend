@@ -15,8 +15,8 @@ export const PostExist = async (req, res, next) => {
     return;
   }
   console.log("POST  NO EXIST");
-  return res.status(200).json({
-    message: "there is no post",
+  return res.status(404).json({
+    error: "Post not found",
   });
 };
 

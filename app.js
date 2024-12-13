@@ -36,14 +36,24 @@ import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import * as glob from "glob";
 import axios from "axios";
+import fs from "fs";
 // import path from "path";
 // import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 app.use(express.json());
 // app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, "public")));
+console.log("new image data>> " + path.resolve(__dirname, "/cholesterol.jpg"));
+const filePath = path.join(__dirname, "./test-files/cholesterol.jpg");
+console.log("Arinze>  " + filePath);
+
+if (!fs.existsSync(filePath)) {
+  console.error("File does not exist:", filePath);
+  throw new Error("File not found");
+}
 // app.use("/swagger-ui", express.static(swaggerUiDist.absolutePath()));
 // swaggerDoc(app);
 
@@ -59,8 +69,8 @@ app.use(baseurl, router);
 // Set up Swagger documentation
 // swaggerDoc(app);
 app.get("/swagger-spec", (req, res) => {
-  console.log("swagger lunched 4444");
-  res.json(swaggerSpec);
+  // console.log("swagger lunched 4444");
+  // res.json(swaggerSpec);
 });
 const options = {
   definition: {
@@ -96,15 +106,15 @@ const options = {
     ],
   },
   // apis: ["./src/Routes/*.js"], // Adjust path to your routes
-  // apis: ["./src/Routes/documentation/*.js"], // Adjust path to your routes
+  apis: ["./src/Routes/documentation/*.js"], // Adjust path to your routes
   // apis: [path.join(__dirname, "./src/Routes/documentation/*.js")], // Use absolute paths
-  apis: glob.sync(path.join(__dirname, "./src/Routes/documentation/*.js")),
+  // apis: glob.sync(path.join(__dirname, "./src/Routes/documentation/*.js")),
   // apis: [path.join(__dirname, "./src/Routes/documentation/*.js")], // Use absolute paths
 };
 const swaggerSpecb = swaggerJsdoc(options);
 
-console.log("Patrick  " + swaggerSpec);
-console.log("Patrick " + JSON.stringify(swaggerSpecb));
+// console.log("Patrick  " + swaggerSpec);
+// console.log("Patrick " + JSON.stringify(swaggerSpecb));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecb));
 // Basic route for testing
 
